@@ -22,19 +22,29 @@ def get_permutations(sequence):
     Note: depending on your implementation, you may return the permutations in
     a different order than what is listed here.
     '''
-
-    pass #delete this line and replace with your code here
+   
+    permutations = []
+    for i in range(len(sequence)):
+        if len(sequence) == 1:
+            permutations.append(sequence)
+        else:
+            perms = [sequence[i] + l for l in  get_permutations(sequence.replace(sequence[i], "",1))]
+            permutations.extend(perms)
+    return list(set(permutations))
+    
+    
+            
 
 if __name__ == '__main__':
-#    #EXAMPLE
-#    example_input = 'abc'
-#    print('Input:', example_input)
-#    print('Expected Output:', ['abc', 'acb', 'bac', 'bca', 'cab', 'cba'])
-#    print('Actual Output:', get_permutations(example_input))
+    #EXAMPLE
+    example_input = 'abc'
+    print('Input:', example_input)
+    print('Expected Output:', ['abc', 'acb', 'bac', 'bca', 'cab', 'cba'])
+    print('Actual Output:', get_permutations(example_input))
     
-#    # Put three example test cases here (for your sanity, limit your inputs
-#    to be three characters or fewer as you will have n! permutations for a 
-#    sequence of length n)
+    # Put three example test cases here (for your sanity, limit your inputs
+    #to be three characters or fewer as you will have n! permutations for a 
+    #sequence of length n)
 
     pass #delete this line and replace with your code here
 
