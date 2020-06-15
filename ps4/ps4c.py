@@ -70,7 +70,9 @@ class SubMessage(object):
             self.message_text (string, determined by input text)
             self.valid_words (list, determined using helper function load_words)
         '''
-        pass #delete this line and replace with your code here
+        self.message_text = text
+        self.valid_words = load_words(WORDLIST_FILENAME)
+        
     
     def get_message_text(self):
         '''
@@ -78,7 +80,7 @@ class SubMessage(object):
         
         Returns: self.message_text
         '''
-        pass #delete this line and replace with your code here
+        return self.message_text
 
     def get_valid_words(self):
         '''
@@ -87,8 +89,8 @@ class SubMessage(object):
         
         Returns: a COPY of self.valid_words
         '''
-        pass #delete this line and replace with your code here
-                
+        return self.valid_words.copy()
+                        
     def build_transpose_dict(self, vowels_permutation):
         '''
         vowels_permutation (string): a string containing a permutation of vowels (a, e, i, o, u)
@@ -108,8 +110,22 @@ class SubMessage(object):
         Returns: a dictionary mapping a letter (string) to 
                  another letter (string). 
         '''
+        dict_letter = {}
+        Vowels = VOWELS_LOWER  + VOWELS_UPPER
+        lower_letters = string.ascii_lowercase
+        upper_letters = string.ascii_uppercase
+        all_letters = lower_letters + upper_letters
         
-        pass #delete this line and replace with your code here
+        for j in all_letters:
+            if j in Vowels:
+                for indx in range(len(vowels_permutation)):
+                            dict_letter[VOWELS_UPPER[indx]] = vowels_permutation[indx].upper() 
+                            dict_letter[VOWELS_LOWER[indx]] = vowels_permutation[indx].lower()
+            else: 
+                dict_letter[j.lower()] = j.lower()
+                dict_letter[j.upper()] = j.upper()
+                
+        return dict_letter
     
     def apply_transpose(self, transpose_dict):
         '''
@@ -119,7 +135,18 @@ class SubMessage(object):
         on the dictionary
         '''
         
-        pass #delete this line and replace with your code here
+        message = self.message_text
+        
+        if len(self.message_text) == 0:
+            return ''
+        word = ""
+        for i in message:
+            try:
+                word += transpose_dict[i]
+            except:
+                word += i
+        return word
+        
         
 class EncryptedSubMessage(SubMessage):
     def __init__(self, text):
@@ -132,7 +159,9 @@ class EncryptedSubMessage(SubMessage):
             self.message_text (string, determined by input text)
             self.valid_words (list, determined using helper function load_words)
         '''
-        pass #delete this line and replace with your code here
+        self.message_text = text
+        self.valid_words = load_words(WORDLIST_FILENAME)
+        
 
     def decrypt_message(self):
         '''
@@ -152,8 +181,31 @@ class EncryptedSubMessage(SubMessage):
         
         Hint: use your function from Part 4A
         '''
-        pass #delete this line and replace with your code here
-    
+        # Short circuit on empty string
+        if len(self.get_message_text()) == 0:
+            return self.get_message_text()
+        
+        perms = get_permutations(VOWELS_LOWER)  
+        valid_words_count = []  
+        for perm in perms:
+            dict_perm = self.build_transpose_dict(perm)
+            str_perm = self.apply_transpose(dict_perm)
+            words_list = str_perm.split()
+            
+            valid_words = 0
+            for word in words_list:
+                if is_word(self.get_valid_words(), word):
+                    valid_words += 1
+            
+            valid_words_count.append(valid_words)
+        
+        max_words = max(valid_words_count)
+        win_permutation = valid_words_count.index(max_words)
+
+        best_dict = self.build_transpose_dict(perms[win_permutation])
+        return self.apply_transpose(best_dict)
+            
+        
 
 if __name__ == '__main__':
 
